@@ -155,6 +155,17 @@ def constructModel(name='M1', num_classes = 2):
                                                          featmap_names=featmap_names, bb_res_fpn=bb_res_fpn, num_classes=num_classes)
         return m
 #
+def constructFRC_ResNet(resnet_name,num_classes=2):
+    aspect_ratios = ((0.5, 1.0, 2.0),) * 5
+    featmap_names=['0','1','2','3']
+    bb_res_fpn = lht_ResNetFPNBackBoneByLayerID(resnet_name=resnet_name,weights=None,trainable_layers=5,returned_layers=[1,2,3,4])
+    anchor_sizes = ((4,8,16,32,64),)*5
+    roi_output_size=(8,10)
+    rpn_anchor_generator =  AnchorGenerator(anchor_sizes, aspect_ratios)
+    m = lhtInitializeFasterRCNN_FPN_ResNet(rpn_anchor_generator=rpn_anchor_generator, roi_output_size=roi_output_size,
+                                                     featmap_names=featmap_names, bb_res_fpn=bb_res_fpn, num_classes=num_classes)
+    return m
+
 def lht_get_cuda_info():
     flag = torch.cuda.is_available()
     if not flag:
